@@ -7,7 +7,7 @@ const QueryFetcher = require("./src/fetcher/query-fetcher");
 const {backgroundEngineInitializer} = require("./src/background-engine");
 
 const app = express();
-const PORT = parseInt(process.env["RAGAVAN_PORT"]) || 3000;
+const PORT = parseInt(process.env["RAGAVAN_PORT"]) || 3001;
 let qFetch = null;
 let dFetch = null;
 
@@ -113,7 +113,7 @@ app.get('/documents/*', async (req, res) => {
 
 init().then(() => {
     // Start server
-    app.listen(3000, async () => {
-        console.log(`Server running on port 3000`);
+    app.listen(3001, async () => {
+        console.log(`Server running on port 3001`);
     });
 })

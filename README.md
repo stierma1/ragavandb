@@ -52,7 +52,8 @@ The server is built using:
 2. **Run Container**
    ```bash
    docker run -d \
-     -p 3000:3000 \
+     --network="host" \
+     -p 3001:3001 \
      -e RAGAVAN_SYNOPSIS_MODEL="your_model:version" \
      -v ./documents:/app/documents \
      ragavan-server
@@ -91,7 +92,7 @@ The server is built using:
 
 | Variable Name                          | Default               | Description                                  |
 |----------------------------------------|-----------------------|----------------------------------------------|
-| `RAGAVAN_PORT`                         | 3000                  | Server port                                  |
+| `RAGAVAN_PORT`                         | 3001                  | Server port                                  |
 | `RAGAVAN_HOST_NAME`                    | localhost             | Server hostname                              |
 | `RAGAVAN_SYNOPSIS_MODEL`               | deepseek-r1:32b       | Model for document summaries                 |
 | `RAGAVAN_TAGS_MODEL`                   | deepseek-r1:14b       | Model for document tagging                   |
@@ -114,7 +115,7 @@ The server is built using:
 ## Contributing
 
 1. Fork this repository
-2. Create a new branch: `git checkout -b feature/your-feature`
+2. Create a new branch: `git checkout -b stierma1/ragavandb`
 3. Make your changes and tests
 4. Submit a pull request
 
