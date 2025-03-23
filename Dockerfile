@@ -1,5 +1,5 @@
-# Use the official Node.js 18 runtime as the parent image
-FROM node:18-alpine
+# Use the official Node.js 20 runtime as the parent image
+FROM node:20-alpine
 
 # Set the working directory in the container
 WORKDIR /app

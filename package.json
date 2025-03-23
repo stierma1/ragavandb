@@ -17,6 +17,7 @@
     "mkdirp": "^3.0.1",
     "pouchdb": "^9.0.0",
     "request": "^2.88.2",
+    "@anush008/tokenizers": "0.0.0",
     "uuid": "^11.1.0"
   }
 }
