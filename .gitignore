@@ -134,3 +134,12 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+text-BGEBaseEN
+text-BGESmallEN
+image-BGEBaseEN
+image-BGESmallEN
+.webui_secret_key
+local_cache
+documents
+metadata

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Document Query Interface</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: auto; }
+        #uploadForm, #queryForm { margin-bottom: 20px; }
+        .result-card { border: 1px solid #ddd; padding: 10px; margin: 10px; border-radius: 4px; }
+        .preview img, .preview video, .preview audio { max-width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Document Management</h1>
+
+        <h2>Upload Document</h2>
+        <form id="uploadForm">
+            <input type="file" id="fileInput" name="file" required>
+            <br><br>
+            <textarea id="metadataInput" placeholder="Enter metadata as JSON" rows="4" cols="50"></textarea>
+            <br>
+            <button type="submit">Upload</button>
+        </form>
+
+        <h2>Query Documents</h2>
+        <form id="queryForm">
+            <textarea id="queryInput" placeholder="Enter your query here" rows="3" cols="50"></textarea>
+            <br>
+            <button type="submit">Search</button>
+        </form>
+
+        <h2>Results</h2>
+        <div id="resultsGrid"></div>
+    </div>
+
+    <script>
+        // Handle document upload
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const file = document.getElementById('fileInput').files[0];
+            const metadata = document.getElementById('metadataInput').value;
+
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            // Convert metadata to JSON blob
+            const metadataBlob = new Blob([metadata], { type: 'application/json' });
+            formData.append('metadata', metadataBlob, 'metadata.json');
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error ${response.status}`);
+                }
+
+                const result = await response.json();
+                alert(result.message);
+            } catch (error) {
+                console.error('Upload failed:', error);
+                alert(`Upload failed: ${error.message}`);
+            }
+        });
+
+        // Handle query submission
+        document.getElementById('queryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const query = document.getElementById('queryInput').value;
+            
+            try {
+                const response = await fetch(`/query?q=${encodeURIComponent(query)}&select=metadata`);
+                const results = await response.json();
+                displayResults(results.results);
+            } catch (error) {
+                console.error('Query failed:', error);
+                alert(`Query failed: ${error.message}`);
+            }
+        });
+
+        // Display query results
+        function displayResults(results) {
+            const grid = document.getElementById('resultsGrid');
+            grid.innerHTML = ''; // Clear previous results
+
+            results.forEach(result => {
+                const card = document.createElement('div');
+                card.className = 'result-card';
+
+                // Display metadata and basic info
+
+                const info = document.createElement('div');
+                info.textContent = `Score: ${result.measurement}, Category: ${result.category}`;
+                card.appendChild(info);
+
+                // Create content preview based on MIME type
+                const documentUrl = result.documentUrl;
+                const tags = result.metadata.tags;
+                const shortSynopsis = result.metadata.shortSynopsis;
+                const mimeType = result.mimeType;
+                const preview = document.createElement('div');
+                preview.className = 'preview';
+
+                if (mimeType.startsWith('text/')) {
+                    // Fetch and display text content
+                    fetch(documentUrl)
+                        .then(response => response.text())
+                        .then(text => {
+                            const textDiv = document.createElement('pre');
+                            textDiv.textContent = text;
+                            preview.appendChild(textDiv);
+                        });
+                } else if (mimeType.startsWith('image/')) {
+                    // Image preview
+                    const img = document.createElement('img');
+                    img.src = documentUrl;
+                    preview.appendChild(img);
+                } else if (mimeType.startsWith('audio/')) {
+                    // Audio player
+                    const audio = document.createElement('audio');
+                    audio.src = documentUrl;
+                    audio.controls = true;
+                    preview.appendChild(audio);
+                } else if (mimeType.startsWith('video/')) {
+                    // Video player
+                    const video = document.createElement('video');
+                    video.src = documentUrl;
+                    video.controls = true;
+                    video.width = 300;
+                    preview.appendChild(video);
+                } else {
+                    preview.textContent = 'Unsupported file type';
+                }
+
+                
+                const ss = document.createElement("p");
+                ss.textContent = shortSynopsis;
+                const tp = document.createElement("p");
+                tp.textContent = JSON.stringify(tags.replace(/(\n)/g, ""));
+                preview.appendChild(tp);
+                preview.appendChild(ss);
+                card.appendChild(preview);
+                grid.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
