@@ -4,14 +4,12 @@ FROM node:18-alpine
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy package files to install dependencies first
-COPY package*.json ./
+# Copy the rest of the application code
+COPY . .
 
 # Install production dependencies (will use package-lock.json if present)
 RUN npm ci --production
 
-# Copy the rest of the application code
-COPY . .
 
 # Define default environment variables that can be overridden at runtime
 ENV RAGAVAN_SYNOPSIS_MODEL=deepseek-r1:32b \
@@ -24,4 +22,4 @@ ENV RAGAVAN_SYNOPSIS_MODEL=deepseek-r1:32b \
 EXPOSE 3000
 
 # Start the app using the entry file (update based on your actual entry file name)
-CMD ["node", "app.js"]
+CMD ["node", "server.js"]
