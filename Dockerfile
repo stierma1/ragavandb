@@ -15,7 +15,7 @@ RUN npm install @anush008/tokenizers-linux-x64-gnu
 ENV RAGAVAN_SYNOPSIS_MODEL=deepseek-r1:32b \
     RAGAVAN_TAGS_MODEL=deepseek-r1:14b \
     RAGAVAN_IMAGE_SYNOPSIS_MODEL=llava:latest \
-    RAGAVAN_PORT=3000 \
+    RAGAVAN_PORT=3001 \
     RAGAVAN_HOST_NAME=localhost
 
 # Expose the default port (3001) the app will listen on
