@@ -27,6 +27,7 @@ The server is built using:
 - Node.js 18+
 - Docker (for production deployment)
 - Docker Compose (optional)
+- Ollama running locally
 
 ## Setup
 
@@ -46,7 +47,7 @@ The server is built using:
 
 1. **Build Docker Image**
    ```bash
-   docker build -t ragavan-server .
+   docker build --platform linux/amd64 -t ragavan-server .
    ```
 
 2. **Run Container**

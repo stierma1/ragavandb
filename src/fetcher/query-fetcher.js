@@ -16,12 +16,65 @@ class QueryFetcher{
         }
     }
 
+    querySplit(queryString){
+        let split = queryString.split("\nPLUS ");
+        const plus = split.map((s) => {
+            return s.split("\nMINUS ")[0];
+        });
+
+        const minus = split.reduce((r, e) => {
+            const [pl, ...rest] = e.split("\nMINUS ");
+            
+            return r.concat(rest);
+        }, [])
+
+        return {plus, minus};
+    }
+
+    add(vectors){
+        const vectorDim = vectors[0].length;
+        const vectorNum = vectors.length;
+        const sumVec = vectors[0].map((i) => {return i});
+
+        for(let i = 1; i < vectorNum; i++){
+            for(let j = 0; j < vectorDim; j++){
+                sumVec[j] += vectors[i][j];
+            }
+        }
+
+        return sumVec;
+    }
+
+    sub(baseVector, vectors){
+        const vectorDim = baseVector.length;
+        const vectorNum = vectors.length;
+        const difVec = baseVector.map((i) => {return i});
+
+        for(let i = 0; i < vectorNum; i++){
+            for(let j = 0; j < vectorDim; j++){
+                difVec[j] -= vectors[i][j];
+            }
+        }
+
+        return difVec;
+    }
+
     async query(queryString, model, categories, k=5, metric, epsilon){
         if(!this.modelEngines[model]){
             throw new Error(`Model of type: ${model} not supported`);
         }
-        
-        const queryVector = await this.modelEngines[model].embedQuery(queryString);
+        let {plus, minus} = this.querySplit(queryString);
+
+        const plusVecs = await Promise.all(plus.map((str) => {
+            return this.modelEngines[model].embedQuery(str);
+        }));
+
+        const minusVecs = await Promise.all(minus.map((str) => {
+            return this.modelEngines[model].embedQuery(str);
+        }));
+
+        const queryVector = this.sub(this.add(plusVecs), minusVecs);
+        //const queryVector = await this.modelEngines[model].embedQuery(queryString);
         let indicies = [];
         let cats = [];
         if(categories.indexOf("*") > -1){

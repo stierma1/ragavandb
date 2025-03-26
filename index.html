@@ -139,7 +139,7 @@
                 const ss = document.createElement("p");
                 ss.textContent = shortSynopsis;
                 const tp = document.createElement("p");
-                tp.textContent = JSON.stringify(tags.replace(/(\n)/g, ""));
+                tp.textContent = JSON.stringify(tags.replace(/(\n)/, ""));
                 preview.appendChild(tp);
                 preview.appendChild(ss);
                 card.appendChild(preview);

@@ -97,6 +97,16 @@ app.get("/index.html", async (req, res) => {
     res.status(200).send(html);
 });
 
+app.get("/script.js", async (req, res) => {
+    const code = await fs.readFile("./script.js", "utf8");
+    res.status(200).send(code);
+});
+
+app.get("/styles.css", async (req, res) => {
+    const code = await fs.readFile("./styles.css", "utf8");
+    res.status(200).send(code);
+});
+
 // Document retrieval endpoint
 app.get('/documents/*', async (req, res) => {
     console.log(req.path)
